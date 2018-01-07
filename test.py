@@ -3,23 +3,7 @@
 from __future__ import division, print_function
 import turtle
 import time
-import scrollphathd
 
-
-class LED(object):
-    def __init__(self):
-        self.r = 17
-        self.c = 7
-        scrollphathd.set_brightness(0.5)
-        self.brightness = 0.5
-
-    def __del__(self):
-        pass
-
-    def draw(self, face, row_offset=0):
-        for i in range(self.r):
-            for j in range(self.c):
-                scrollphathd.pixel(i, j, self.brightness)
 
 class LEDTurtle(turtle.Turtle):
     """
@@ -35,7 +19,7 @@ class LEDTurtle(turtle.Turtle):
         self.hideturtle()
 
         s = self.getscreen()
-        s.tracer(self.c*self.r,0)
+        s.tracer(self.c*self.r, 0)
         # print('delay', s.delay())
 
     def __del__(self):
@@ -51,6 +35,7 @@ class LEDTurtle(turtle.Turtle):
                     self.dot(dia, "gray")
                 else:
                     self.dot(dia, "blue")
+
 
 class Eye(object):
     def __init__(self, leds, dims):
@@ -75,6 +60,7 @@ class Eye(object):
 
         self.led.draw()
 
+
 class Mouth(object):
     def __init__(self, leds):
         self.led = leds
@@ -85,7 +71,8 @@ class Mouth(object):
 
 class LEDFace(object):
     def __init__(self, drawClass):
-        self.led = drawClass.__init__(self)
+        # self.led = drawClass.__init__(self)
+        self.led = drawClass()
         self.eyeLim = 10  # eye goes 0-9, offset to start mouth
 
     def __del__(self):
@@ -94,6 +81,9 @@ class LEDFace(object):
     def talk(self, msg):
         for ltr in msg:
             self.mouth.letter(ltr)
+
+    def draw(self, pic):
+        self.led.draw(pic)
 
 
 faces = [
@@ -137,7 +127,7 @@ faces = [
     ]
 ]
 
-led = LED()
+led = LEDFace(LEDTurtle)
 
 for _ in range(3):
     for f in faces:
