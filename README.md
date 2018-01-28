@@ -6,6 +6,8 @@
 
 [scroll hd docs](http://docs.pimoroni.com/scrollphathd/)
 
+Install the library with: `pip install scrollphathd`
+
 # Lip Sync
 
 Ideally, you want the mouth to follow the shapes below as it speaks so it looks
