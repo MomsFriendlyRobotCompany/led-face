@@ -5,7 +5,10 @@ import time
 import random
 from subprocess import call
 from multiprocessing import Process
-from linuxLED import LEDTurtle
+try:
+	from linuxLED import LEDTurtle
+except ImportError:
+	from linuxLED import LED
 
 
 def say(msg):
@@ -23,8 +26,10 @@ class TTS(object):
 		use. It searches for: say, espeak, spd-say. If no program is found, it uses
 		echo to print text to the command line
 		"""
-		found = False
-		if not tts:
+		if tts:
+			self.tts = tts
+		else:
+			found = False
 			for cmd in ['espeak', 'spd-say', 'say']:
 				if call(['which -s {}'.format(cmd)], shell=True) == 0:
 					self.tts = [cmd]
@@ -33,9 +38,7 @@ class TTS(object):
 					break
 			if not found:
 				print('could not find a tts program, using echo instead')
-				self.tts = 'echo'
-		else:
-			self.tts = tts
+				self.tts = ['echo']
 
 	def setOptions(self, options):
 		"""
@@ -55,58 +58,6 @@ class TTS(object):
 		p = Process(target=say, args=(c,))
 		p.start()
 		# p.join()
-
-
-
-# class LEDTurtle(turtle.Turtle):
-# 	"""
-# 	Simulate a pimoroni LED hat 17x7
-# 	"""
-# 	def __init__(self):
-# 		self.r = 17
-# 		self.c = 7
-#
-# 		turtle.Turtle.__init__(self)
-# 		self.penup()
-# 		self.speed(0)
-# 		self.hideturtle()
-#
-# 		s = self.getscreen()
-# 		s.tracer(self.c*self.r, 0)
-# 		# print('delay', s.delay())
-#
-# 	def __del__(self):
-# 		self.bye()
-#
-# 	def draw(self, face, row_offset=0):
-# 		# if len(face) > 17:
-# 		# 	raise Exception('LED Face too many rows:', len(face))
-# 		for i in range(self.r):
-# 			for j in range(self.c):
-# 				space = 10
-# 				dia = 7
-# 				self.setpos((j+row_offset)*space, -i*space)
-# 				if face[i][j] == 0:
-# 					self.dot(dia, "gray")
-# 				elif face[i][j] == 1:
-# 					self.dot(dia, "red")
-# 				elif face[i][j] == 2:
-# 					self.dot(dia, "blue")
-# 				else:
-# 					raise Exception('Invalid draw value:', face[i][j])
-
-
-
-	# eyes = {
-	#     'normal': [[0,0,2,0,2,0,0]],
-	#     'left': [[0,2,0,2,0,0,0]],
-	#     'right': [[0,0,0,2,0,2,0]],
-	#     'big': [
-	#         [0,2,2,0,2,2,0],
-	#         [0,2,2,0,2,2,0]
-	#     ]
-	# }
-
 
 
 class Eyes(object):
@@ -284,6 +235,7 @@ class LEDFace(object):
 		self.led.draw(pic)
 
 
-led = LEDFace(LEDTurtle)
+led = LEDFace(LED)
+# led = LEDFace(LEDTurtle)
 led.talk('hi how are you! This is a test')
 time.sleep(1)
